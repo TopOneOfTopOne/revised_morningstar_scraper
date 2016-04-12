@@ -3,7 +3,9 @@
 
 require_relative 'dividends_scraper'
 require_relative 'stock_info_scraper'
-@EX_DIV_DATE = Time.parse('17/03/2016')
+require_relative 'calc_profit' # for stock class
+@EX_DIV_DATE = Time.parse('13/04/2016')
+@MONEY       = 4000
 
 outputFile = File.open(File.expand_path('info.txt',File.dirname(__FILE__)), 'w')
 
@@ -19,6 +21,7 @@ get_upcoming_dividends.each do |dividend|
   div_yield = dividend[:amount].to_f/info[:last_price].to_f
   info = info.merge({div_yield: div_yield}).merge(dividend)
   info.each {|k,v| outputFile.puts "#{k}: #{v}"}
+  outputFile.puts Stock.new(info[:last_price].to_f, info[:amount].to_f, @MONEY.to_f, info[:franking].to_f).details
   outputFile.puts '=============='
 end
 
